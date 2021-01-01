@@ -1,0 +1,13 @@
+#!/bin/bash
+
+echo "***** black *****"
+poetry run black --check .
+
+echo "***** flake8 *****"
+poetry run flake8 --max-line-length 88 --ignore=E203,W503,W504 jadoc tests
+
+echo "***** isort *****"
+poetry run isort --check .
+
+echo "***** xenon *****"
+poetry run xenon --max-absolute B --max-modules A --max-average A jadoc tests
