@@ -26,6 +26,7 @@ cform_words: Dict[Type[CForm], List[Word]] = {
         Word("x", ["x"], c_type="x", c_form="x意志推量x"),
         Word("x", ["x"], c_type="x", c_form="x未然ウ接続x"),
         Word("だろ", ["x"], c_type="x", c_form="未然形"),
+        Word("でしょ", ["x"], c_type="x", c_form="未然形"),
     ],
     Renyo: [
         Word("x", ["x"], c_type="x", c_form="x連用x"),

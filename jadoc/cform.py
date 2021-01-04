@@ -37,7 +37,9 @@ class IshiSuiryo(CForm):
 
     @staticmethod
     def is_cform_of(word: Word) -> bool:
-        is_irregular = word.surface == "だろ" and word.c_form == "未然形"
+        is_daro = word.surface == "だろ" and word.c_form == "未然形"
+        is_desyo = word.surface == "でしょ" and word.c_form == "未然形"
+        is_irregular = is_daro or is_desyo
         return "意志推量" in word.c_form or "未然ウ接続" in word.c_form or is_irregular
 
 
