@@ -148,3 +148,12 @@ class TestDoc:
             doc = Doc(text, conjugation)
             doc.update_surfaces(interval, surfaces)
             assert doc.text() == expect
+
+    def test_copy(self, conjugations):
+        for conjugation in conjugations:
+            doc = Doc("こんにちは。", conjugation)
+            copied_doc = doc.copy()
+            assert id(doc) != id(copied_doc)
+            assert id(doc.words) != id(copied_doc.words)
+            for word_org, word_copy in zip(doc.words, copied_doc.words):
+                assert word_org.to_dict() == word_copy.to_dict()

@@ -1,3 +1,4 @@
+from copy import deepcopy
 from typing import List, Optional, Type, Union
 
 from visedit import StringEdit
@@ -214,3 +215,8 @@ class Doc:
             tokens.append(token)
 
         return sep.join(tokens)
+
+    def copy(self, words: Union[str, List[Word]] = None) -> "Doc":
+        if words is None:
+            words = self.words
+        return Doc(deepcopy(words), self.conjugation)
