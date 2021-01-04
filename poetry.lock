@@ -199,7 +199,7 @@ python-versions = "*"
 
 [[package]]
 name = "youcab"
-version = "0.1.2"
+version = "0.1.3"
 description = "Converts MeCab parsing results to Python objects."
 category = "main"
 optional = false
@@ -359,8 +359,8 @@ wcwidth = [
     {file = "wcwidth-0.2.5.tar.gz", hash = "sha256:c4d647b99872929fdb7bdcaa4fbe7f01413ed3d98077df798530e5b04f116c83"},
 ]
 youcab = [
-    {file = "youcab-0.1.2-py3-none-any.whl", hash = "sha256:03fec365d7b5912f9b2ad8d1f040f767e2beec8136d99951d0b1537cfbad1c52"},
-    {file = "youcab-0.1.2.tar.gz", hash = "sha256:b92de00bde5d2fdde9b418757748e33c3b617d6ba5a6aed7e26096c5ab472e25"},
+    {file = "youcab-0.1.3-py3-none-any.whl", hash = "sha256:8486d796ec7c8594536d63e7187ae5bcf474b040b1b39d3acdf764e83ef8d75d"},
+    {file = "youcab-0.1.3.tar.gz", hash = "sha256:ea8951024811129c4ef582fa20babad8b0f08aae236baf477628b53f0617d2e0"},
 ]
 zipp = [
     {file = "zipp-3.4.0-py3-none-any.whl", hash = "sha256:102c24ef8f171fd729d46599845e95c7ab894a4cf45f5de11a44cc7444fb1108"},

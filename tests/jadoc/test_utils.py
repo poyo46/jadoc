@@ -7,7 +7,10 @@ from jadoc.utils import ENV_DEBUG, debug_on
 
 class TestUtils:
     def test_debug_mode_should_be_disabled_if_no_env(self):
-        del os.environ[ENV_DEBUG]
+        try:
+            del os.environ[ENV_DEBUG]
+        except KeyError:
+            pass
         assert not debug_on()
 
     @pytest.mark.parametrize("env_value", ("true", "on"))

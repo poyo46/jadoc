@@ -5,7 +5,7 @@ from jadoc.doc import Doc
 
 
 def test():
-    tokenize = youcab.generate_tokenizer(dicdir="/lib64/mecab/dic/ipadic/")
+    tokenize = youcab.generate_tokenizer()
     conjugation = Conjugation(tokenize)
     doc = Doc("本を書きました。", conjugation)
 
