@@ -1,0 +1,31 @@
+{
+    "editor.highlightActiveIndentGuide": true,
+    "editor.rulers": [
+        88
+    ],
+    "files.watcherExclude": {
+        "**/.git/**": true,
+        "**/.venv/**": true,
+        "**/.pytest_cache/**": true
+    },
+    "files.trimTrailingWhitespace": true,
+    "editor.formatOnSave": true,
+    "python.formatting.provider": "black",
+    "python.formatting.blackPath": "/usr/local/pyenv/shims/black",
+    "python.venvFolders": [
+        ".venv",
+        "venv"
+    ],
+    "python.linting.enabled": true,
+    "python.linting.lintOnSave": true,
+    "python.linting.pylintEnabled": false,
+    "python.linting.flake8Enabled": true,
+    "python.linting.flake8Path": "/usr/local/pyenv/shims/flake8",
+    "python.linting.flake8Args": [
+        "--max-line-length",
+        "88",
+        "--ignore=E203,W503,W504"
+    ],
+    "autoDocstring.docstringFormat": "numpy",
+    "autoDocstring.startOnNewLine": false
+}
