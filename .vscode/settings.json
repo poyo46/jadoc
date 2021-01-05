@@ -1,21 +1,31 @@
 {
-    "editor.highlightActiveIndentGuide": true,
-    "editor.rulers": [
-        88
-    ],
+    "[python]": {
+        "editor.tabSize": 4,
+        "editor.highlightActiveIndentGuide": true,
+        "editor.rulers": [
+            88
+        ],
+        "editor.formatOnSave": true,
+        "editor.formatOnPaste": false,
+        "editor.formatOnType": false,
+        "editor.insertSpaces": true,
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": true
+        }
+    },
     "files.watcherExclude": {
         "**/.git/**": true,
         "**/.venv/**": true,
         "**/.pytest_cache/**": true
     },
     "files.trimTrailingWhitespace": true,
-    "editor.formatOnSave": true,
-    "python.formatting.provider": "black",
-    "python.formatting.blackPath": "/usr/local/pyenv/shims/black",
     "python.venvFolders": [
         ".venv",
         "venv"
     ],
+    "python.formatting.provider": "black",
+    "python.formatting.blackPath": "/usr/local/pyenv/shims/black",
+    "python.sortImports.path": "/usr/local/pyenv/shims/isort",
     "python.linting.enabled": true,
     "python.linting.lintOnSave": true,
     "python.linting.pylintEnabled": false,
