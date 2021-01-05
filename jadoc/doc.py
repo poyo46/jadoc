@@ -2,6 +2,7 @@ from copy import deepcopy
 from typing import List, Optional, Type, Union
 
 from visedit import StringEdit
+from youcab import youcab
 from youcab.word import Word
 
 from .cform import CForm, Mizen, Nothing, Renyo, RenyoOnbin, get_normalized_cform
@@ -31,7 +32,12 @@ def show_details(func):
 
 
 class Doc:
-    def __init__(self, words: Union[str, List[Word]], conjugation: Conjugation) -> None:
+    def __init__(
+        self, words: Union[str, List[Word]], conjugation: Conjugation = None
+    ) -> None:
+        if conjugation is None:
+            tokenize = youcab.generate_tokenizer()
+            conjugation = Conjugation(tokenize)
         self.conjugation = conjugation
         if type(words) == str:
             words = self.conjugation.tokenize(words)

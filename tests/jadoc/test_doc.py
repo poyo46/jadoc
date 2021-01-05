@@ -18,6 +18,10 @@ TEXT = "".join(SURFACES)
 
 
 class TestDoc:
+    def test_should_be_able_to_initialize_with_only_a_string(self):
+        doc = Doc(TEXT)
+        assert doc is not None
+
     def test_should_be_able_to_initialize_with_string(self, conjugations):
         for conjugation in conjugations:
             doc = Doc(TEXT, conjugation)
