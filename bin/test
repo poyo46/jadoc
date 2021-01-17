@@ -1,4 +1,4 @@
 #!/bin/bash
 
-poetry run pytest -v -s -p no:warnings -p no:cacheprovider --cov=jadoc --cov-branch --cov-report=term-missing
-poetry run pytest -v --doctest-modules jadoc
+poetry run pytest -s -p no:warnings -p no:cacheprovider --cov=jadoc --cov-branch --cov-report=term-missing
+poetry run pytest --doctest-modules jadoc

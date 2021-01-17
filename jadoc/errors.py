@@ -6,33 +6,33 @@ class JadocError(Exception):
     pass
 
 
-class UnknownPosError(JadocError):
+class CannotConjugateError(JadocError):
     """
-    Raised when part of speech is unknown.
-    """
-
-    pass
-
-
-class UnknownCTypeError(JadocError):
-    """
-    Raised when conjugation type is unknown.
+    Raised when a word with no conjugation is conjugated.
     """
 
     pass
 
 
-class UnknownCFormError(JadocError):
+class MecabConfigError(JadocError):
     """
-    Raised when conjugation form is unknown.
+    Raised when the ``mecab-config`` command is not found.
     """
 
     pass
 
 
-class UnknownConjugationError(JadocError):
+class NotFoundNodeFormatError(JadocError):
     """
-    Raised when conjugation is unknown.
+    Raised when the MeCab ``node-format`` could not be set automatically.
+    """
+
+    pass
+
+
+class InvalidTokenizerError(JadocError):
+    """
+    Raised when the tokenizer is not working properly.
     """
 
     pass

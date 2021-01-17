@@ -9,15 +9,14 @@ def test():
     print("/".join(surfaces))  # 本/を/書き/まし/た/。
 
     # print plain text
-    print(doc.text())  # 本を書きました。
+    print(doc.get_text())  # 本を書きました。
 
     # delete a word
     doc.delete(3)  # Word conjugation will be done as needed.
-    print(doc.text())  # 本を書いた。
+    print(doc.get_text())  # 本を書いた。
 
     # update a word
     word = doc.conjugation.tokenize("読む")
-    doc.update(
-        2, word
-    )  # In addition to conjugation, transform the peripheral words as needed.
-    print(doc.text())  # 本を読んだ。
+    # In addition to conjugation, transform the peripheral words as needed.
+    doc.update(2, word)
+    print(doc.get_text())  # 本を読んだ。

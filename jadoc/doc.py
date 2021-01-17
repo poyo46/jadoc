@@ -1,15 +1,11 @@
-from copy import deepcopy
-from typing import List, Optional, Type, Union
+from typing import List, Optional, Union
 
-from visedit import StringEdit
-from youcab import youcab
-from youcab.word import Word
-
-from .cform import CForm, Mizen, Nothing, Renyo, RenyoOnbin, get_normalized_cform
 from .conj import Conjugation
-from .ctype import Sahen
-from .errors import UnknownCFormError
+from .mecab.tokenizer import generate_tokenizer
 from .utils import debug_on
+from .word.cform import ConjugationForm, Mizen, Renyo, RenyoOnbin
+from .word.ctype import Sahen
+from .word.word import Word
 
 
 def show_details(func):
@@ -23,25 +19,19 @@ def show_details(func):
             )
             print(f"{self.__class__.__name__}.{func.__name__}({all_args}): ")
             if before != after:
-                diff = StringEdit(before, after).generate_text(truncate=True)
-                diff = "  " + diff.replace("\n", "\n  ")
-                print(diff)
+                print(before)
+                print(after)
         return result
 
     return _show_details
 
 
 class Doc:
-    def __init__(
-        self, words: Union[str, List[Word]], conjugation: Conjugation = None
-    ) -> None:
+    def __init__(self, text: str, conjugation: Conjugation = None) -> None:
         if conjugation is None:
-            tokenize = youcab.generate_tokenizer()
-            conjugation = Conjugation(tokenize)
+            conjugation = Conjugation(tokenize=generate_tokenizer())
         self.conjugation = conjugation
-        if type(words) == str:
-            words = self.conjugation.tokenize(words)
-        self.words: List[Word] = words
+        self.words: List[Word] = self.conjugation.tokenize(text)
         if debug_on():
             print("Doc.__init__(): \n" + self.simple_view())
 
@@ -52,7 +42,7 @@ class Doc:
         else:
             return 0 <= interval.start <= (interval.stop - 1) <= index_max
 
-    def text(self, interval: Optional[Union[int, range]] = None) -> str:
+    def get_text(self, interval: Optional[Union[int, range]] = None) -> str:
         if interval is None:
             interval = range(0, len(self.words))
         if type(interval) == int:
@@ -66,11 +56,11 @@ class Doc:
     @show_details
     def retokenize(self, text: Optional[str] = None) -> None:
         if text is None:
-            text = self.text()
+            text = self.get_text()
         self.words = self.conjugation.tokenize(text)
 
     @show_details
-    def _conjugate_irregularly(self, i: int, cform: Type[CForm]) -> bool:
+    def _conjugate_irregularly(self, i: int, c_form: ConjugationForm) -> bool:
         """
         Returns
         -------
@@ -79,6 +69,9 @@ class Doc:
         False
             Otherwise.
         """
+        ctype = type(self.words[i].c_type)
+        cform = type(c_form)
+
         # irregular case of 「ある」
         is_aru_mizen_case = all(
             [
@@ -92,21 +85,17 @@ class Doc:
             return True
 
         # irregular case of 「する」
-        is_suru_mizen_case = all(
-            [
-                Sahen.is_ctype_of(self.words[i]),
-                cform == Mizen,
-                self._is_within_range(i + 1),
-            ]
+        is_suru_mizen_case = (
+            ctype == Sahen and cform == Mizen and self._is_within_range(i + 1)
         )
         if is_suru_mizen_case:
             if self.words[i + 1].base in ("せる", "れる"):
                 self.words[i].surface = "さ"
-                self.words[i].c_form = Mizen.name
+                self.words[i].c_form = Mizen(value="未然形")
                 return True
             elif self.words[i + 1].base == "ぬ":
                 self.words[i].surface = "せ"
-                self.words[i].c_form = Mizen.name
+                self.words[i].c_form = Mizen(value="未然形")
                 return True
 
         return False
@@ -116,7 +105,8 @@ class Doc:
         surface = self.words[i + 1].surface
         s = surface[0]
 
-        self.words[i] = self.conjugation.conjugate(self.words[i], RenyoOnbin)
+        renyo_onbin = RenyoOnbin(value="連用形-音便")
+        self.conjugation.conjugate(self.words[i], renyo_onbin)
 
         if self.words[i].base[-1] in "ぬぶむ":
             s = s.replace("た", "だ").replace("て", "で")
@@ -125,16 +115,17 @@ class Doc:
         self.words[i + 1].surface = s + surface[1:]
 
     @show_details
-    def conjugate(self, i: int, cform: Type[CForm]) -> None:
+    def conjugate(self, i: int, c_form: ConjugationForm) -> None:
         if not self._is_within_range(i):
             return
 
-        if self._conjugate_irregularly(i, cform):
+        if self._conjugate_irregularly(i, c_form):
             return
 
         # normal case
-        self.words[i] = self.conjugation.conjugate(self.words[i], cform)
+        self.conjugation.conjugate(self.words[i], c_form)
 
+        cform = type(c_form)
         # post-processing in the case of renyo-onbin
         is_renyo_onbin_case = all(
             [
@@ -149,16 +140,11 @@ class Doc:
     def insert(self, i: int, words: Union[Word, List[Word]]) -> None:
         if type(words) == Word:
             words = [words]
-
         self.words[i:i] = words
 
-        try:
-            cform = get_normalized_cform(self.words[i - 1])
-            if cform != Nothing:
-                self.conjugate(i - 1, cform)
-                self.conjugate(i - 1 + len(words), cform)
-        except (IndexError, UnknownCFormError):
-            return
+        c_form = self.words[i - 1].c_form
+        self.conjugate(i - 1, c_form)
+        self.conjugate(i - 1 + len(words), c_form)
 
     @show_details
     def delete(self, interval: Union[int, range]) -> None:
@@ -168,14 +154,9 @@ class Doc:
         if not self._is_within_range(interval):
             return
 
-        try:
-            cform = get_normalized_cform(self.words[interval.stop - 1])
-        except UnknownCFormError:
-            cform = Nothing
-
+        c_form = self.words[interval.stop - 1].c_form
         del self.words[interval.start : interval.stop]
-        if cform != Nothing:
-            self.conjugate(interval.start - 1, cform)
+        self.conjugate(interval.start - 1, c_form)
 
     @show_details
     def update(
@@ -203,26 +184,21 @@ class Doc:
         if type(surfaces) == str:
             surfaces = [surfaces]
 
-        pre = self.text(range(0, interval.start))
+        pre = self.get_text(range(0, interval.start))
         surface = "".join(surfaces)
-        post = self.text(range(interval.stop, len(self.words)))
+        post = self.get_text(range(interval.stop, len(self.words)))
         text = pre + surface + post
         self.retokenize(text)
 
-    def simple_view(self, sep: Optional[str] = None) -> str:
-        if sep is None:
-            sep = "/"
-
+    def simple_view(self, sep: str = "/") -> str:
         tokens = []
         for word in self.words:
-            token = f"{word.surface}[{word.pos[0][0]}]"
-            if word.c_type != "":
-                token += f"({word.c_type[:2]}・{word.c_form[:2]})"
+            token = word.surface + "[" + str(word.pos)[:3] + "]"
+            if word.has_conjugation:
+                token += "(" + str(word.c_type)[:3] + ";" + str(word.c_form)[:3] + ")"
             tokens.append(token)
 
         return sep.join(tokens)
 
-    def copy(self, words: Union[str, List[Word]] = None) -> "Doc":
-        if words is None:
-            words = self.words
-        return Doc(deepcopy(words), self.conjugation)
+    def copy(self) -> "Doc":
+        return Doc(self.get_text(), self.conjugation)
