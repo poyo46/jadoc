@@ -40,8 +40,7 @@ print(doc.text())  # 本を書いた。
 
 # update a word
 word = doc.conjugation.tokenize("読む")
-doc.update(
-    2, word
-)  # In addition to conjugation, transform the peripheral words as needed.
+# In addition to conjugation, transform the peripheral words as needed.
+doc.update(2, word)
 print(doc.text())  # 本を読んだ。
 ```
