@@ -34,12 +34,14 @@ class AdjectivalNoun(PartOfSpeech):
 class Adjective(PartOfSpeech):
     """
     形容詞
-    ``接尾辞-形容詞性述語接尾辞`` をこれに含める？
     """
 
     @staticmethod
     def conforms_to(pos_info: List[str]) -> bool:
-        return pos_info[0] == "形容詞"
+        is_suffix_type = (
+            len(pos_info) > 1 and pos_info[0] == "接尾辞" and "形容詞" in pos_info[1]
+        )
+        return is_suffix_type or pos_info[0] == "形容詞"
 
 
 class Adnominal(PartOfSpeech):
@@ -129,7 +131,7 @@ class Suffix(PartOfSpeech):
 
     @staticmethod
     def conforms_to(pos_info: List[str]) -> bool:
-        return pos_info[0] == "接尾辞"
+        return not Adjective.conforms_to(pos_info) and pos_info[0] == "接尾辞"
 
 
 class Symbol(PartOfSpeech):

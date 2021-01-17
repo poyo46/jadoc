@@ -1,6 +1,8 @@
 from abc import ABCMeta, abstractmethod
 from typing import List, Type
 
+from .pos import Adjective, Auxiliary
+
 
 class ConjugationForm(metaclass=ABCMeta):
     """
@@ -14,7 +16,7 @@ class ConjugationForm(metaclass=ABCMeta):
 
     @staticmethod
     @abstractmethod
-    def conforms_to(surface: str, c_form_info: str) -> bool:
+    def conforms_to(surface: str, pos_info: List[str], c_form_info: str) -> bool:
         pass
 
     def __str__(self) -> str:
@@ -27,8 +29,11 @@ class Mizen(ConjugationForm):
     """
 
     @staticmethod
-    def conforms_to(surface: str, c_form_info: str) -> bool:
-        return not IshiSuiryo.conforms_to(surface, c_form_info) and "未然" in c_form_info
+    def conforms_to(surface: str, pos_info: List[str], c_form_info: str) -> bool:
+        return (
+            not IshiSuiryo.conforms_to(surface, pos_info, c_form_info)
+            and "未然" in c_form_info
+        )
 
 
 class IshiSuiryo(ConjugationForm):
@@ -37,7 +42,7 @@ class IshiSuiryo(ConjugationForm):
     """
 
     @staticmethod
-    def conforms_to(surface: str, c_form_info: str) -> bool:
+    def conforms_to(surface: str, pos_info: List[str], c_form_info: str) -> bool:
         is_daro = surface == "だろ" and c_form_info == "未然形"
         is_desyo = surface == "でしょ" and c_form_info == "未然形"
         is_irregular = is_daro or is_desyo
@@ -50,7 +55,7 @@ class Renyo(ConjugationForm):
     """
 
     @staticmethod
-    def conforms_to(surface: str, c_form_info: str) -> bool:
+    def conforms_to(surface: str, pos_info: List[str], c_form_info: str) -> bool:
         return "連用" in c_form_info
 
 
@@ -60,9 +65,9 @@ class RenyoOnbin(ConjugationForm):
     """
 
     @staticmethod
-    def conforms_to(surface: str, c_form_info: str) -> bool:
+    def conforms_to(surface: str, pos_info: List[str], c_form_info: str) -> bool:
         is_onbin = "音便" in c_form_info or "連用タ接続" in c_form_info
-        return Renyo.conforms_to(surface, c_form_info) and is_onbin
+        return Renyo.conforms_to(surface, pos_info, c_form_info) and is_onbin
 
 
 class RenyoNi(ConjugationForm):
@@ -72,9 +77,9 @@ class RenyoNi(ConjugationForm):
     """
 
     @staticmethod
-    def conforms_to(surface: str, c_form_info: str) -> bool:
+    def conforms_to(surface: str, pos_info: List[str], c_form_info: str) -> bool:
         is_ni = "ニ" in c_form_info
-        return Renyo.conforms_to(surface, c_form_info) and is_ni
+        return Renyo.conforms_to(surface, pos_info, c_form_info) and is_ni
 
 
 class Shushi(ConjugationForm):
@@ -83,7 +88,7 @@ class Shushi(ConjugationForm):
     """
 
     @staticmethod
-    def conforms_to(surface: str, c_form_info: str) -> bool:
+    def conforms_to(surface: str, pos_info: List[str], c_form_info: str) -> bool:
         return "終止" in c_form_info or "基本" in c_form_info
 
 
@@ -93,7 +98,7 @@ class Rentai(ConjugationForm):
     """
 
     @staticmethod
-    def conforms_to(surface: str, c_form_info: str) -> bool:
+    def conforms_to(surface: str, pos_info: List[str], c_form_info: str) -> bool:
         return "連体" in c_form_info or "体言接続" in c_form_info
 
 
@@ -103,7 +108,7 @@ class Katei(ConjugationForm):
     """
 
     @staticmethod
-    def conforms_to(surface: str, c_form_info: str) -> bool:
+    def conforms_to(surface: str, pos_info: List[str], c_form_info: str) -> bool:
         return "仮定" in c_form_info
 
 
@@ -113,8 +118,21 @@ class Meirei(ConjugationForm):
     """
 
     @staticmethod
-    def conforms_to(surface: str, c_form_info: str) -> bool:
+    def conforms_to(surface: str, pos_info: List[str], c_form_info: str) -> bool:
         return "命令" in c_form_info
+
+
+class Gokan(ConjugationForm):
+    """
+    語幹
+    """
+
+    @staticmethod
+    def conforms_to(surface: str, pos_info: List[str], c_form_info: str) -> bool:
+        pos_condition = Adjective.conforms_to(pos_info) or Auxiliary.conforms_to(
+            pos_info
+        )
+        return pos_condition and c_form_info in ("ガル接続", "語幹-一般")
 
 
 class Nothing(ConjugationForm):
@@ -123,7 +141,7 @@ class Nothing(ConjugationForm):
     """
 
     @staticmethod
-    def conforms_to(surface: str, c_form_info: str) -> bool:
+    def conforms_to(surface: str, pos_info: List[str], c_form_info: str) -> bool:
         return c_form_info == ""
 
 
@@ -133,7 +151,7 @@ class Unknown(ConjugationForm):
     """
 
     @staticmethod
-    def conforms_to(surface: str, c_form_info: str) -> bool:
+    def conforms_to(surface: str, pos_info: List[str], c_form_info: str) -> bool:
         return False
 
 
@@ -147,12 +165,15 @@ ALL_CFORM: List[Type[ConjugationForm]] = [
     Rentai,
     Katei,
     Meirei,
+    Gokan,
     Nothing,
 ]
 
 
-def get_normalized_cform(surface: str, c_form_info: str) -> ConjugationForm:
+def get_normalized_cform(
+    surface: str, pos_info: List[str], c_form_info: str
+) -> ConjugationForm:
     for cform in ALL_CFORM:
-        if cform.conforms_to(surface, c_form_info):
+        if cform.conforms_to(surface, pos_info, c_form_info):
             return cform(value=c_form_info)
     return Unknown(value=c_form_info)

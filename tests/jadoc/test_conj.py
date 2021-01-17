@@ -5,7 +5,7 @@ import pytest
 from jadoc.conj import Conjugation, _replace_with_vowel
 from jadoc.mecab.config import get_dicdirs
 from jadoc.mecab.tokenizer import generate_tokenizer
-from jadoc.word.cform import Meirei, RenyoOnbin
+from jadoc.word.cform import Gokan, Meirei, RenyoOnbin
 from jadoc.word.word import Word
 
 tokenizers = [generate_tokenizer(dicdir) for dicdir in get_dicdirs()]
@@ -75,6 +75,16 @@ class TestConjugation:
                 Word("x", ["x"], c_type_info="x", c_form_info="終止形"),
                 Meirei(value="命令形"),
                 Word("x", ["x"], c_type_info="x", c_form_info="終止形"),
+            ),
+            (
+                Word("楽しい", ["形容詞", "自立"], "楽しい", "形容詞・イ段", "基本形"),
+                Gokan(value="語幹"),
+                Word("楽し", ["形容詞", "自立"], "楽しい", "形容詞・イ段", "ガル接続"),
+            ),
+            (
+                Word("良い", ["形容詞", "非自立可能"], "良い", "形容詞", "終止形"),
+                Gokan(value="語幹"),
+                Word("良さ", ["形容詞", "非自立可能"], "良い", "形容詞", "語幹-一般"),
             ),
         ],
     )

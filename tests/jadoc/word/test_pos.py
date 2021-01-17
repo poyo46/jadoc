@@ -24,7 +24,7 @@ from jadoc.word.pos import (
 )
 
 examples: Dict[Type[PartOfSpeech], List[List[str]]] = {
-    Adjective: [["形容詞", "x"]],
+    Adjective: [["形容詞", "x"], ["接尾辞", "x形容詞x"]],
     Adnominal: [["連体詞", "x"], ["x", "連体詞"]],
     Adverb: [["副詞", "x"]],
     AdjectivalNoun: [["形状詞", "x"]],

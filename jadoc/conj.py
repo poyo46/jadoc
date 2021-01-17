@@ -4,6 +4,7 @@ from typing import Callable, Dict, List, Optional, Type
 from .utils import debug_on
 from .word.cform import (
     ConjugationForm,
+    Gokan,
     IshiSuiryo,
     Katei,
     Meirei,
@@ -114,41 +115,35 @@ class Conjugation:
     def _generate_ichidan_ending_dic(self) -> Dict[Type[ConjugationForm], str]:
         words = self.tokenize("起きない。起きよう。起きます。起きる。起きるとき。起きれば。起きろ！")
         cforms = [Mizen, IshiSuiryo, Renyo, Shushi, Rentai, Katei, Meirei]
-        endings = [
-            word.surface[2:] for word in words if isinstance(word.c_type, Ichidan)
-        ]
+        endings = [word.surface[2:] for word in words if type(word.c_type) == Ichidan]
         assert len(cforms) == len(endings)
         return {c: e for c, e in zip(cforms, endings)}
 
     def _generate_kahen_ending_dic(self) -> Dict[Type[ConjugationForm], str]:
         words = self.tokenize("持ってこない。持ってこよう。持ってきます。持ってくる。持ってくるとき。持ってくれば。持ってこい。")
         cforms = [Mizen, IshiSuiryo, Renyo, Shushi, Rentai, Katei, Meirei]
-        endings = [word.surface for word in words if isinstance(word.c_type, Kahen)]
+        endings = [word.surface for word in words if type(word.c_type) == Kahen]
         assert len(cforms) == len(endings)
         return {c: e for c, e in zip(cforms, endings)}
 
     def _generate_sahen_ending_dic(self) -> Dict[Type[ConjugationForm], str]:
         words = self.tokenize("すぐしない。読書しよう。します。する。するとき。すれば。読書せよ！")
         cforms = [Mizen, IshiSuiryo, Renyo, Shushi, Rentai, Katei, Meirei]
-        endings = [word.surface for word in words if isinstance(word.c_type, Sahen)]
+        endings = [word.surface for word in words if type(word.c_type) == Sahen]
         assert len(cforms) == len(endings)
         return {c: e for c, e in zip(cforms, endings)}
 
     def _generate_adjective_ending_dic(self) -> Dict[Type[ConjugationForm], str]:
-        words = self.tokenize("美しかろう。美しく咲く。美しかった。美しい。美しいとき。美しければ。")
-        cforms = [IshiSuiryo, Renyo, RenyoOnbin, Shushi, Rentai, Katei]
-        endings = [
-            word.surface[2:] for word in words if isinstance(word.c_type, Adjective)
-        ]
+        words = self.tokenize("美しかろう。美しく咲く。美しかった。美しい。美しいとき。美しければ。美しそう。")
+        cforms = [IshiSuiryo, Renyo, RenyoOnbin, Shushi, Rentai, Katei, Gokan]
+        endings = [word.surface[2:] for word in words if type(word.c_type) == Adjective]
         assert len(cforms) == len(endings)
         return {c: e for c, e in zip(cforms, endings)}
 
     def _generate_auxiliary_da_ending_dic(self) -> Dict[Type[ConjugationForm], str]:
         words = self.tokenize("鯖だろう。鯖である。鯖だった。鯖だ。鯖なの。鯖ならば。")
         cforms = [IshiSuiryo, Renyo, RenyoOnbin, Shushi, Rentai, Katei]
-        endings = [
-            word.surface for word in words if isinstance(word.c_type, AuxiliaryDa)
-        ]
+        endings = [word.surface for word in words if type(word.c_type) == AuxiliaryDa]
         assert len(cforms) == len(endings)
         ending_dic = {c: e for c, e in zip(cforms, endings)}
         ending_dic[RenyoNi] = "に"
@@ -156,6 +151,9 @@ class Conjugation:
 
     @show_details
     def conjugate(self, word: Word, c_form: ConjugationForm) -> Word:
+        if not word.has_conjugation:
+            return word
+
         ctype = type(word.c_type)
         cform = type(c_form)
 
@@ -164,6 +162,8 @@ class Conjugation:
                 c_form = Renyo(value="連用形")
                 cform = type(c_form)
             ending = self._ending_dic[ctype][cform]
+            if not word.base.endswith("しい") and cform == Gokan:
+                ending = "さ"  # 語幹-サ
         except KeyError:
             return word
 

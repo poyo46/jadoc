@@ -28,7 +28,7 @@ class Word:
 
         if c_form_info is None:
             c_form_info = ""
-        self.c_form = get_normalized_cform(surface, c_form_info)
+        self.c_form = get_normalized_cform(surface, pos_info, c_form_info)
 
         self.has_conjugation = (
             type(self.c_type) != Nothing and type(self.c_type) != Unknown
