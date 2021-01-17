@@ -114,6 +114,18 @@ class Particle(PartOfSpeech):
         return pos_info[0] == "助詞"
 
 
+class EndingParticle(Particle):
+    """
+    終助詞
+    """
+
+    @staticmethod
+    def conforms_to(pos_info: List[str]) -> bool:
+        is_particle = Particle.conforms_to(pos_info)
+        is_ending = len(pos_info) > 1 and "終助詞" in pos_info[1]
+        return is_particle and is_ending
+
+
 class Prefix(PartOfSpeech):
     """
     接頭辞
@@ -183,6 +195,7 @@ ALL_POS: List[Type[PartOfSpeech]] = [
     Conjunction,
     Interjection,
     Noun,
+    EndingParticle,
     Particle,
     Prefix,
     Suffix,

@@ -10,6 +10,7 @@ from jadoc.word.pos import (
     Adverb,
     Auxiliary,
     Conjunction,
+    EndingParticle,
     Interjection,
     Noun,
     Other,
@@ -33,6 +34,7 @@ examples: Dict[Type[PartOfSpeech], List[List[str]]] = {
     Interjection: [["感動詞", "x"], ["フィラー", "x"]],
     Noun: [["x名詞", "x"]],
     Particle: [["助詞", "x"]],
+    EndingParticle: [["助詞", "x終助詞x"]],
     Prefix: [["接頭x", "x"]],
     Suffix: [["接尾辞", "x"]],
     Symbol: [["記号", "x"], ["補助記号", "x"], ["空白", "x"], ["特殊", "x"]],
@@ -48,6 +50,8 @@ def test_conforms_to(
     pos: Type[PartOfSpeech], pos_: Type[PartOfSpeech], info_list: List[str]
 ):
     if pos == pos_:
+        expect = True
+    elif pos == Particle and pos_ == EndingParticle:
         expect = True
     else:
         expect = False
