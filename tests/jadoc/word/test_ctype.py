@@ -17,12 +17,17 @@ from jadoc.word.ctype import (
     Ichidan,
     Kahen,
     Nothing,
+    Rahen,
     Sahen,
     Unknown,
     get_normalized_ctype,
 )
 
 examples: Dict[Type[ConjugationType], List[Dict[str, str]]] = {
+    Rahen: [
+        {"pos_info": ["x"], "base": "ある", "c_type_info": "ラ変"},
+        {"pos_info": ["x"], "base": "ある", "c_type_info": "x五段x"},
+    ],
     Godan: [{"pos_info": ["x"], "base": "x", "c_type_info": "x五段x"}],
     GodanI: [
         {"pos_info": ["x"], "base": "書く", "c_type_info": "x五段x"},

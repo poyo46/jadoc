@@ -49,7 +49,7 @@ class Godan(ConjugationType):
 
     @staticmethod
     def conforms_to(pos_info: List[str], base: str, c_type_info: str) -> bool:
-        return "五段" in c_type_info
+        return base != "ある" and "五段" in c_type_info
 
     @staticmethod
     def conjugate(base: str, ending: str) -> str:
@@ -60,6 +60,21 @@ class Godan(ConjugationType):
         idx = Godan.JA_CHARS["u"].index(u)
         ending = Godan.JA_CHARS[e][idx] + ending[1:]
         return base[:-1] + ending
+
+
+class Rahen(ConjugationType):
+    """
+    ラ行変格活用
+    「ある」のみ。GodanZとほぼ同じ。
+    """
+
+    @staticmethod
+    def conforms_to(pos_info: List[str], base: str, c_type_info: str) -> bool:
+        return base == "ある" and (c_type_info == "ラ変" or "五段" in c_type_info)
+
+    @staticmethod
+    def conjugate(base: str, ending: str) -> str:
+        return Godan.conjugate(base, ending)
 
 
 class GodanI(Godan):
@@ -244,6 +259,7 @@ class Unknown(ConjugationType):
 
 
 ALL_CTYPE: List[Type[ConjugationType]] = [
+    Rahen,
     GodanI,
     GodanZ,
     GodanN,

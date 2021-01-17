@@ -27,6 +27,7 @@ from .word.ctype import (
     GodanZ,
     Ichidan,
     Kahen,
+    Rahen,
     Sahen,
 )
 from .word.word import Word
@@ -83,6 +84,7 @@ class Conjugation:
         self.tokenize = tokenize
         self._ending_dic = {ctype: {} for ctype in ALL_CTYPE}
         self._ending_dic[Godan] = self._generate_godan_ending_dic()
+        self._ending_dic[Rahen] = self._generate_godan_ending_dic(renyo_onbin="っ")
         self._ending_dic[GodanI] = self._generate_godan_ending_dic(renyo_onbin="い")
         self._ending_dic[GodanZ] = self._generate_godan_ending_dic(renyo_onbin="っ")
         self._ending_dic[GodanN] = self._generate_godan_ending_dic(renyo_onbin="ん")
