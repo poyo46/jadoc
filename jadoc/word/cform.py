@@ -66,7 +66,9 @@ class RenyoOnbin(ConjugationForm):
 
     @staticmethod
     def conforms_to(surface: str, pos_info: List[str], c_form_info: str) -> bool:
-        is_onbin = "音便" in c_form_info or "連用タ接続" in c_form_info
+        is_onbin = (
+            "音便" in c_form_info or "連用タ接続" in c_form_info or "連用ゴザイ接続" in c_form_info
+        )
         return Renyo.conforms_to(surface, pos_info, c_form_info) and is_onbin
 
 

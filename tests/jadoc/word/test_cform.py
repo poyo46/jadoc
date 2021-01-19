@@ -34,6 +34,7 @@ examples: Dict[Type[ConjugationForm], List[Dict[str, str]]] = {
     RenyoOnbin: [
         {"surface": "x", "pos_info": ["x"], "c_form_info": "x連用x音便x"},
         {"surface": "x", "pos_info": ["x"], "c_form_info": "x連用タ接続x"},
+        {"surface": "x", "pos_info": ["x"], "c_form_info": "x連用ゴザイ接続x"},
     ],
     RenyoNi: [
         {"surface": "x", "pos_info": ["x"], "c_form_info": "x連用xニx"},
