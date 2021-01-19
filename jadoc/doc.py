@@ -1,4 +1,4 @@
-from typing import List, Optional, Union
+from typing import Dict, List, Optional, Union
 
 from .conj import Conjugation
 from .mecab.tokenizer import generate_tokenizer
@@ -200,5 +200,5 @@ class Doc:
 
         return sep.join(tokens)
 
-    def copy(self) -> "Doc":
-        return Doc(self.get_text(), self.conjugation)
+    def to_word_list(self) -> List[Dict[str, str]]:
+        return [word.to_dict() for word in self.words]

@@ -143,11 +143,7 @@ class TestDoc:
         doc = Doc(TEXT)
         assert len(doc.simple_view()) > 0
 
-    @pytest.mark.parametrize("conjugation", conjugations)
-    def test_copy(self, conjugation):
-        doc = Doc("こんにちは。", conjugation)
-        copied_doc = doc.copy()
-        assert id(doc) != id(copied_doc)
-        assert id(doc.words) != id(copied_doc.words)
-        for word_org, word_copy in zip(doc.words, copied_doc.words):
-            assert str(word_org) == str(word_copy)
+    def test_to_word_list(self):
+        doc = Doc(TEXT)
+        for dic in doc.to_word_list():
+            assert type(dic) == dict
