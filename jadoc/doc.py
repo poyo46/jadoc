@@ -35,7 +35,7 @@ class Doc:
         if debug_on():
             print("Doc.__init__(): \n" + self.simple_view())
 
-    def _is_within_range(self, interval: Union[int, range]) -> bool:
+    def is_within_range(self, interval: Union[int, range]) -> bool:
         index_max = len(self.words) - 1
         if type(interval) == int:
             return 0 <= interval <= index_max
@@ -77,7 +77,7 @@ class Doc:
             [
                 self.words[i].base == "ある",
                 cform == Mizen,
-                self._is_within_range(i + 1) and self.words[i + 1].base == "ない",
+                self.is_within_range(i + 1) and self.words[i + 1].base == "ない",
             ]
         )
         if is_aru_mizen_case:
@@ -86,7 +86,7 @@ class Doc:
 
         # irregular case of 「する」
         is_suru_mizen_case = (
-            ctype == Sahen and cform == Mizen and self._is_within_range(i + 1)
+            ctype == Sahen and cform == Mizen and self.is_within_range(i + 1)
         )
         if is_suru_mizen_case:
             if self.words[i + 1].base in ("せる", "れる"):
@@ -116,7 +116,7 @@ class Doc:
 
     @show_details
     def conjugate(self, i: int, c_form: ConjugationForm) -> None:
-        if not self._is_within_range(i):
+        if not self.is_within_range(i):
             return
 
         if self._conjugate_irregularly(i, c_form):
@@ -130,7 +130,7 @@ class Doc:
         is_renyo_onbin_case = all(
             [
                 cform == Renyo or cform == RenyoOnbin,
-                self._is_within_range(i + 1) and self.words[i + 1].surface[0] in "ただてで",
+                self.is_within_range(i + 1) and self.words[i + 1].surface[0] in "ただてで",
             ]
         )
         if is_renyo_onbin_case:
@@ -151,7 +151,7 @@ class Doc:
         if type(interval) == int:
             interval = range(interval, interval + 1)
 
-        if not self._is_within_range(interval):
+        if not self.is_within_range(interval):
             return
 
         c_form = self.words[interval.stop - 1].c_form
@@ -164,7 +164,7 @@ class Doc:
     ) -> None:
         if type(interval) == int:
             interval = range(interval, interval + 1)
-        if not self._is_within_range(interval):
+        if not self.is_within_range(interval):
             return
         if type(words) == Word:
             words = [words]
@@ -179,7 +179,7 @@ class Doc:
     ) -> None:
         if type(interval) == int:
             interval = range(interval, interval + 1)
-        if not self._is_within_range(interval):
+        if not self.is_within_range(interval):
             return
         if type(surfaces) == str:
             surfaces = [surfaces]
