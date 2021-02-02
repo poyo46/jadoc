@@ -22,7 +22,7 @@ license = "Apache-2.0"
 name = "jadoc"
 readme = "README.md"
 repository = "https://github.com/poyo46/jadoc"
-version = "0.2.3"
+version = "0.2.4"
 
 [tool.poetry.dependencies]
 python = "^3.6"
