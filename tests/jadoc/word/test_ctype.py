@@ -7,6 +7,8 @@ from jadoc.word.ctype import (
     ALL_CTYPE,
     Adjective,
     AuxiliaryDa,
+    AuxiliaryDesu,
+    AuxiliaryMasu,
     AuxiliaryNai,
     ConjugationType,
     Godan,
@@ -64,6 +66,12 @@ examples: Dict[Type[ConjugationType], List[Dict[str, str]]] = {
     AuxiliaryDa: [
         {"pos_info": ["助動詞"], "base": "だ", "c_type_info": "x"},
     ],
+    AuxiliaryDesu: [
+        {"pos_info": ["助動詞"], "base": "です", "c_type_info": "x"},
+    ],
+    AuxiliaryMasu: [
+        {"pos_info": ["助動詞"], "base": "ます", "c_type_info": "x"},
+    ],
     AuxiliaryNai: [
         {"pos_info": ["助動詞"], "base": "ない", "c_type_info": "x"},
     ],
@@ -100,6 +108,7 @@ def test_conforms_to(
 @pytest.mark.parametrize(
     "ctype, base, ending, expect",
     [
+        (Rahen, "ある", "i", "あり"),
         (Godan, "晒す", "a", "晒さ"),
         (Godan, "書く", "い", "書い"),
         (GodanI, "書く", "oう", "書こう"),
@@ -116,6 +125,8 @@ def test_conforms_to(
         (Sahen, "論ずる", "すれ", "論ずれ"),
         (Adjective, "楽しい", "かろう", "楽しかろう"),
         (AuxiliaryDa, "だ", "だっ", "だっ"),
+        (AuxiliaryDesu, "です", "でし", "でし"),
+        (AuxiliaryMasu, "ます", "ますれ", "ますれ"),
         (AuxiliaryNai, "ない", "かっ", "なかっ"),
     ],
 )

@@ -19,6 +19,8 @@ from .word.ctype import (
     ALL_CTYPE,
     Adjective,
     AuxiliaryDa,
+    AuxiliaryDesu,
+    AuxiliaryMasu,
     AuxiliaryNai,
     Godan,
     GodanI,
@@ -94,6 +96,8 @@ class Conjugation:
         self._ending_dic[Sahen] = self._generate_sahen_ending_dic()
         self._ending_dic[Adjective] = self._generate_adjective_ending_dic()
         self._ending_dic[AuxiliaryDa] = self._generate_auxiliary_da_ending_dic()
+        self._ending_dic[AuxiliaryDesu] = self._generate_auxiliary_desu_ending_dic()
+        self._ending_dic[AuxiliaryMasu] = self._generate_auxiliary_masu_ending_dic()
         self._ending_dic[AuxiliaryNai] = self._generate_adjective_ending_dic()
         if debug_on():
             pprint(self._ending_dic)
@@ -150,6 +154,20 @@ class Conjugation:
         ending_dic = {c: e for c, e in zip(cforms, endings)}
         ending_dic[RenyoNi] = "に"
         return ending_dic
+
+    def _generate_auxiliary_desu_ending_dic(self) -> Dict[Type[ConjugationForm], str]:
+        words = self.tokenize("そうでしょう。そうでした。そうです。そうですので。")
+        cforms = [IshiSuiryo, Renyo, Shushi, Rentai]
+        endings = [word.surface for word in words if type(word.c_type) == AuxiliaryDesu]
+        assert len(cforms) == len(endings)
+        return {c: e for c, e in zip(cforms, endings)}
+
+    def _generate_auxiliary_masu_ending_dic(self) -> Dict[Type[ConjugationForm], str]:
+        words = self.tokenize("書きません。書きましょう。書きました。書きます。書きますので。書きますれば。なさいませ。")
+        cforms = [Mizen, IshiSuiryo, Renyo, Shushi, Rentai, Katei, Meirei]
+        endings = [word.surface for word in words if type(word.c_type) == AuxiliaryMasu]
+        assert len(cforms) == len(endings)
+        return {c: e for c, e in zip(cforms, endings)}
 
     @show_details
     def conjugate(self, word: Word, c_form: ConjugationForm) -> Word:

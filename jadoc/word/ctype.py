@@ -216,6 +216,34 @@ class AuxiliaryDa(ConjugationType):
         return ending
 
 
+class AuxiliaryDesu(ConjugationType):
+    """
+    助動詞「です」
+    """
+
+    @staticmethod
+    def conforms_to(pos_info: List[str], base: str, c_type_info: str) -> bool:
+        return pos.Auxiliary.conforms_to(pos_info) and base == "です"
+
+    @staticmethod
+    def conjugate(base: str, ending: str) -> str:
+        return ending
+
+
+class AuxiliaryMasu(ConjugationType):
+    """
+    助動詞「ます」
+    """
+
+    @staticmethod
+    def conforms_to(pos_info: List[str], base: str, c_type_info: str) -> bool:
+        return pos.Auxiliary.conforms_to(pos_info) and base == "ます"
+
+    @staticmethod
+    def conjugate(base: str, ending: str) -> str:
+        return ending
+
+
 class AuxiliaryNai(ConjugationType):
     """
     助動詞「ない」
@@ -270,6 +298,8 @@ ALL_CTYPE: List[Type[ConjugationType]] = [
     Sahen,
     Adjective,
     AuxiliaryDa,
+    AuxiliaryDesu,
+    AuxiliaryMasu,
     AuxiliaryNai,
     Nothing,
 ]
