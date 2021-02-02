@@ -122,19 +122,20 @@ class Doc:
         if self._conjugate_irregularly(i, c_form):
             return
 
-        # normal case
-        self.conjugation.conjugate(self.words[i], c_form)
-
         cform = type(c_form)
-        # post-processing in the case of renyo-onbin
-        is_renyo_onbin_case = all(
-            [
-                cform == Renyo or cform == RenyoOnbin,
-                self.is_within_range(i + 1) and self.words[i + 1].surface[0] in "ただてで",
-            ]
+
+        next_is_td = (
+            self.is_within_range(i + 1) and self.words[i + 1].surface[0] in "ただてで"
         )
+        is_renyo_onbin_case = (cform == Renyo or cform == RenyoOnbin) and next_is_td
         if is_renyo_onbin_case:
             self._conjugate_renyo_onbin(i)
+            return
+
+        # normal case
+        if cform == RenyoOnbin and not next_is_td:
+            c_form = Renyo("連用形")
+        self.conjugation.conjugate(self.words[i], c_form)
 
     @show_details
     def insert(self, i: int, words: Union[Word, List[Word]]) -> None:

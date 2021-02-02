@@ -116,6 +116,7 @@ class TestDoc:
             (TEXT, range(-10, 10), "毎週", TEXT),
             ("本を書きました。", range(2, 4), "読む", "本を読んだ。"),
             (TEXT, range(2, 4), "走っ", "毎日とても走る。"),
+            ("美しゅうございません。", range(1, 4), "ない", "美しくない。"),
         ],
     )
     def test_update(self, conjugation, text, interval, surfaces, expect):
